@@ -8,73 +8,108 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
 import com.demo.model.Author;
-import com.demo.model.Post;
+import com.demo.model.Book;
+import com.demo.model.OrderDetail;
 import com.demo.model.User;
 import com.demo.repository.AuthorRepository;
-import com.demo.repository.PostRepository;
+import com.demo.repository.BookRepository;
+import com.demo.repository.OrderRepository;
 import com.demo.repository.UserRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Service
 public class Mutation implements GraphQLRootResolver {
 	@Autowired
-	private AuthorRepository authRepo;
+	private AuthorRepository authRepository;
 	@Autowired
-	private PostRepository postRepo;
+	private OrderRepository orderRepository;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private BookRepository bookRepository;
 
-	public Mutation(AuthorRepository authRepo, PostRepository postRepo, UserRepository userRepository) {
+	public Mutation(AuthorRepository authRepository, OrderRepository orderRepository, UserRepository userRepository,
+			BookRepository bookRepository) {
 		super();
-		this.authRepo = authRepo;
-		this.postRepo = postRepo;
+		this.authRepository = authRepository;
+		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
+		this.bookRepository = bookRepository;
+	}
+	
+
+	public Author addAuthor(String authorName) {
+		/*
+		 * Author author = new Author(); author.setAuthorName(authorName);
+		 * authRepository.save(author); return author;
+		 */
+		return authRepository.save(new Author(authorName));
+
 	}
 
-	public Author addAuthor(Long id, String authorName, String price) {
-		return authRepo.save(new Author(id, authorName, price));
+	public OrderDetail addOrder(Integer quantity, Integer amount, Long user, Long book) {
+		OrderDetail order = new OrderDetail();
+		order.setQuantity(quantity);
+		order.setBook(new Book(book));
+		order.setUser(new User(user));
+		Optional<Book> b = bookRepository.findById(book);
+		Book bookObj = b.get();
+		order.setAmount(quantity * bookObj.getPrice());
+		orderRepository.save(order);
+		return order;
+
 	}
 
-	public Post orderProceed(Long id, String orderProceed) {
-		Optional<Post> p = postRepo.findById(id);
-		Post post = p.get();
-		post.setOrderProceed(orderProceed);
-		return postRepo.save(post);
+	public User addUser(String userName, String email, String password, String role) {
+		User newUser = new User();
+		newUser.setUserName(userName);
+		newUser.setPassword(password);
+		newUser.setEmail(email);
+		newUser.setRole(role);
+		return userRepository.save(newUser);
+	}
+	//addBook(bookName:String!,price:Int!,author:ID!):Book
+	
+	public Book addBook(String bookName,Integer price, Long author) {
+		Book book=new Book();
+		book.setAuthor(new Author(author));
+		book.setBookName(bookName);
+		book.setPrice(price);
+		bookRepository.save(book);
+		return book;
+		
+	}
+	
+	
+	
+	public OrderDetail orderProceed(Long id, String orderProceed) {
+		Optional<OrderDetail> o = orderRepository.findById(id);
+		OrderDetail order = o.get();
+		order.setOrderProceed(orderProceed);
+		return orderRepository.save(order);
 	}
 
-	public Post addOrder(Long orderId, String quantity, Long authorId) {
-		Optional<Author> a = authRepo.findById(authorId);
-		Author auth = a.get();
-		int Price = Integer.parseInt(auth.getPrice());
-		if (auth != null) {
+	/*
+	 * public Author updateAuthor(Long id, String authorName, String price) { Author
+	 * author = new Author(id, authorName, price); author.setPrice(price);
+	 * author.setAuthorName(authorName); return authRepo.save(author); }
+	 */
 
-			Post post = new Post(null, quantity);
-			int total = Price * Integer.parseInt(quantity);
-			post.setPrice("" + total);
-			post.setAuthorId(authorId);
-			post.setId(orderId);
-			return postRepo.save(post);
-		} else
-			return null;
+	public Boolean deleteAuthor(Long id) {
+		authRepository.deleteById(id);
+		return true;
 	}
-
-	public Author updateAuthor(Long id, String authorName, String price) {
-		Author author = new Author(id, authorName, price);
-		author.setPrice(price);
-		author.setAuthorName(authorName);
-		return authRepo.save(author);
+	public Boolean deleteBook(Long id) {
+		bookRepository.deleteById(id);
+		return true;
 	}
-
-	public Boolean  deleteAuthor(Long  id) {
-		authRepo.deleteById(id);
+	public Boolean deleteOrder(Long id) {
+		orderRepository.deleteById(id);
+		return true;
+	}
+	public Boolean deleteUser(Long id) {
+		userRepository.deleteById(id);
 		return true;
 	}
 
-	public User createUser(String name, String password, String email) {
-		User newUser = new User();
-		newUser.setUserName(name);
-		newUser.setPassword(password);
-		newUser.setEmail(email);
-		return userRepository.save(newUser);
-	}
 }

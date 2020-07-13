@@ -1,5 +1,6 @@
 package com.demo.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,10 +10,10 @@ import javax.persistence.Id;
 public class Author {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private  Long id;
+	
+	
+	private  Long authorId;
 	private  String authorName;
-	private String price;
-
 	
 
 
@@ -22,29 +23,34 @@ public class Author {
 
 
 
-	public Author(Long id, String authorName, String price) {
+	public Author(Long authorId) {
 		super();
-		this.id = id;
+		this.authorId = authorId;
+	}
+
+
+
+	public Author(Long authorId, String authorName) {
+		super();
+		this.authorId = authorId;
 		this.authorName = authorName;
-		this.price=price;
+
+	}
+	
+
+	public Author(String authorName) {
+		super();
+		this.authorName = authorName;
 	}
 
 
 
-	public String getPrice() {
-		return price;
+	public Long getAuthorId() {
+		return authorId;
 	}
 
-	public void setPrice(String price) {
-		this.price = price;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public void setAuthorId(Long authorId) {
+		this.authorId = authorId;
 	}
 
 	public String getAuthorName() {

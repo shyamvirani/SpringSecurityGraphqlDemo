@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,47 +12,72 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coxautodev.graphql.tools.GraphQLRootResolver;
 import com.demo.model.Author;
-import com.demo.model.Post;
+import com.demo.model.Book;
+import com.demo.model.OrderDetail;
 import com.demo.model.User;
 import com.demo.repository.AuthorRepository;
-import com.demo.repository.PostRepository;
+import com.demo.repository.BookRepository;
+import com.demo.repository.OrderRepository;
 import com.demo.repository.UserRepository;
 
 
 @CrossOrigin(origins = "*",maxAge = 3600)
-@RestController
-@RequestMapping("/rest/graphql")
+@Service
 public class Query implements GraphQLRootResolver {
 
 	@Autowired
-	private  PostRepository postRepository;
+	private  OrderRepository orderRepository;
 	@Autowired
-	private  AuthorRepository authRepo;
+	private  AuthorRepository authRepository;
 	@Autowired
 	private UserRepository userRepository;
-	public Query(PostRepository postRepository, AuthorRepository authRepo,UserRepository userRepository) {
+	
+	@Autowired
+	private BookRepository bookRepository;
+	
+	public Query(OrderRepository orderRepository, AuthorRepository authRepository, UserRepository userRepository,
+			BookRepository bookRepository) {
 		super();
-		this.postRepository = postRepository;
-		this.authRepo = authRepo;
-		this.userRepository=userRepository;
+		this.orderRepository = orderRepository;
+		this.authRepository = authRepository;
+		this.userRepository = userRepository;
+		this.bookRepository = bookRepository;
 	}
 	
 
-
-	@GetMapping("/getProlist")
-	public List<Post> allOrders() {
-		return postRepository.findAll();
+	
+	public List<OrderDetail> allOrders() {
+		return orderRepository.findAll();
 	}
-
-	@GetMapping("/list")
+	
 	public List<Author> allAuthors() {
-		return authRepo.findAll();
+		return authRepository.findAll();
 	}
-
-	public Optional<Author> getAuthor(Long Id){
-		 return authRepo.findById(Id);
-		
+	
+	public List<User> allUsers() {
+		return userRepository.findAll();
 	}
+	
+	public List<Book> allBooks() {
+		return bookRepository.findAll();
+	}
+	
+	
+	
+	public Optional<OrderDetail> getOrder(Long Id){
+		 return orderRepository.findById(Id);	
+	}
+	public Optional<Author> getAuthor(Long authorId){
+		 return authRepository.findById(authorId);	
+	}
+	
+	public Optional<User> getUser(Long Id){
+		 return userRepository.findById(Id);	
+	}
+	public Optional<Book> getBook(Long Id){
+		 return bookRepository.findById(Id);	
+	}
+	
 
 	public User loginUser(String userName){
 		User dbUser=userRepository.findByUserName(userName);
@@ -59,8 +85,6 @@ public class Query implements GraphQLRootResolver {
 		return dbUser;
 	}
 
-	public List<User> allUsers() {
-		return userRepository.findAll();
-	}
+
 
 }

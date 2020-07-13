@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.demo.model.Post;
+import com.demo.model.OrderDetail;
 @Repository
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface OrderRepository extends JpaRepository<OrderDetail, Long> {
 	
-	List<Post> findByAuthorId(Long authorId);
+	//List<Order> findByAuthorId(Long authorId);
 }

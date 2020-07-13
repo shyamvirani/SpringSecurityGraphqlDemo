@@ -1,22 +1,31 @@
 type Author {
-  id: ID!
+  authorId: ID!
   authorName: String!
-  price : String!
-  posts: [Post]
  }
  
-type Post {
-  id: ID!
-  price: String!
-  quantity: String
+type Order{
+  orderId: ID!
+  amount:Int
+  quantity:Int
   orderProceed : String!
+  user:User
+  book:Book
 }
 
 type User {
-  id: ID!
+  userId: ID!
   userName: String!
   email: String!
   password: String!
+  role:String!
+}
+type Book{
+	bookId:ID!
+	bookName:String!
+	price:Int
+	author:Author
+	
+
 }
 
 schema {
@@ -25,18 +34,29 @@ schema {
 }
 
  type Query {
-  allOrders: [Post]
+  allOrders: [Order]
   allAuthors: [Author]
+  allBooks:[Book]
   allUsers: [User]
-  getAuthor(id: ID!): Author
+  getAuthor(authorId: ID!): Author
+  getOrder(orderId:ID!):Order
+  getBook(bookId:ID!):Book
+  getUser(userId:ID!):User
   loginUser(userName:String!):User
 }
 
 type Mutation {
-  addAuthor(id: ID!,authorName: String!,price: String!) : Author
-  orderProceed(id: ID!,orderProceed : String!): Post
-  addOrder(orderId: ID!,quantity: String!, authorId: ID!): Post
-  updateAuthor(id: ID!,authorName: String!,price: String!): Author
-  deleteAuthor(id: ID!): Boolean
-  createUser(userName: String!,email: String!,password: String!): User
+  
+  orderProceed(id: ID!,orderProceed : String!): Order
+  addAuthor(authorName: String!) : Author
+  addOrder(quantity: String!,amount:Int!,book:ID!,user:ID!): Order
+  addUser(userName: String!,email: String!,password: String!,role:String!): User
+  addBook(bookName:String!,price:Int!,author:ID!):Book
+ 
+  #updateAuthor(id: ID!,authorName: String!,price: String!): Author
+  deleteAuthor(authorId: ID!): Boolean
+  deleteUser(userId:ID!):Boolean
+  deleteBook(bookId:ID!):Boolean
+  deleteOrder(orderId:ID!):Boolean
+ 
 }

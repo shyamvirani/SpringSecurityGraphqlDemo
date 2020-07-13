@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.demo.repository.AuthorRepository;
-import com.demo.repository.PostRepository;
+import com.demo.repository.BookRepository;
+import com.demo.repository.OrderRepository;
 import com.demo.repository.UserRepository;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @SpringBootApplication
@@ -20,8 +21,8 @@ public class SpringGraphqlAuthApplication {
 	
 	@Bean
 	@Autowired
-	public ServletRegistrationBean graphQLServlet(PostRepository postRepository, AuthorRepository authRepository, UserRepository userRepository ) {
-		return new ServletRegistrationBean(new GraphQLEntryPoint(postRepository, authRepository,userRepository),"/graphql");
+	public ServletRegistrationBean graphQLServlet(OrderRepository orderRepository, AuthorRepository authRepository, UserRepository userRepository,BookRepository bookRepository ) {
+		return new ServletRegistrationBean(new GraphQLEntryPoint(orderRepository, authRepository,userRepository,bookRepository),"/graphql");
 	}
 
 }
